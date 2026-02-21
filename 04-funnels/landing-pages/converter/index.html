@@ -498,12 +498,9 @@ p:last-child{margin-bottom:0}
   justify-content:center;
 }
 .modal-close:hover{color:var(--text-dark)}
-.modal iframe{
-  width:100%;
-  height:70vh;
-  min-height:500px;
-  border:none;
-  display:block;
+.modal-form{
+  padding:32px 28px 28px;
+  min-height:400px;
 }
 
 /* --- FLOATING CTA (mobile) --- */
@@ -964,16 +961,14 @@ ym(XXXXXXXX,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvi
      ============================ -->
 <div class="footer"></div>
 
-<!-- MODAL: Tally form -->
-<!-- TODO: заменить TALLY_FORM_ID на реальный ID формы из Tally.so -->
+<!-- MODAL: QForm -->
+<!-- TODO: заменить QFORM_ID на реальный ID формы из qform.io -->
 <div class="modal-overlay" id="formModal">
   <div class="modal" role="dialog" aria-label="Запись на экспертный разбор">
     <button class="modal-close" aria-label="Закрыть">&times;</button>
-    <iframe
-      data-tally-src="https://tally.so/embed/TALLY_FORM_ID?alignLeft=1&hideTitle=1&transparentBackground=1"
-      loading="lazy"
-      title="Запись на экспертный разбор"
-    ></iframe>
+    <div class="modal-form">
+      <div data-formid="QFORM_ID"></div>
+    </div>
   </div>
 </div>
 
@@ -1041,17 +1036,11 @@ document.querySelectorAll('.faq-item').forEach(function(item){
   var modal = document.getElementById('formModal');
   if (!modal) return;
   var closeBtn = modal.querySelector('.modal-close');
-  var iframe = modal.querySelector('iframe');
-  var tallySrc = iframe ? iframe.getAttribute('data-tally-src') : '';
 
   function openModal(e){
     if (e) e.preventDefault();
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
-    // Lazy-load Tally iframe on first open
-    if (iframe && !iframe.src && tallySrc) {
-      iframe.src = tallySrc;
-    }
     // Яндекс.Метрика goal (если счётчик подключён)
     if (typeof ym === 'function') ym(XXXXXXXX, 'reachGoal', 'open_form');
   }
@@ -1078,11 +1067,32 @@ document.querySelectorAll('.faq-item').forEach(function(item){
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
   });
+
+  // QForm: слушаем отправку формы для аналитики
+  // TODO: заменить QFORM_ID на реальный ID
+  var formDiv = modal.querySelector('[data-formid]');
+  if (formDiv) {
+    formDiv.addEventListener('qform_' + formDiv.getAttribute('data-formid') + '_send', function(){
+      if (typeof ym === 'function') ym(XXXXXXXX, 'reachGoal', 'submit_form');
+    });
+  }
 })();
 </script>
 
-<!-- Tally embed loader (подгружает стили формы) -->
-<script src="https://tally.so/widgets/embed.js" async></script>
+<!-- QForm loader -->
+<script>
+(function(){
+  function init(){
+    var s=document.createElement("script");
+    s.type="text/javascript";s.async=true;
+    s.src="//cdn.qform.io/forms.js?v="+new Date().getTime()/1000;
+    var x=document.getElementsByTagName("script")[0];
+    x.parentNode.insertBefore(s,x);
+  }
+  if(document.readyState==="interactive"){init()}
+  else{window.addEventListener("DOMContentLoaded",init,false)}
+})();
+</script>
 
 </body>
 </html>

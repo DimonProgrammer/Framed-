@@ -1,5 +1,39 @@
 # Проект FRAMED — Инструкции для агента
 
+## Живой контекст проекта (GitHub Issues)
+
+> Актуальный контекст проекта хранится в pinned GitHub Issue и обновляется агентом после каждого созвона или принятого решения. Этот файл — базовые инструкции, Issue — живые данные.
+
+**Читать контекст:**
+
+```bash
+gh issue list --label context --repo DimonProgrammer/Framed- --state open --json number,title
+gh issue view 1 --repo DimonProgrammer/Framed-
+```
+
+**Обновить контекст** (после созвона, смены приоритетов, новых решений):
+
+```bash
+gh issue edit 1 --repo DimonProgrammer/Framed- --body "..."
+# или добавить заметку в комментарий:
+gh issue comment 1 --repo DimonProgrammer/Framed- --body "📝 [дата]: ..."
+```
+
+**Задачи в работе:**
+
+```bash
+# Создать задачу:
+gh issue create --title "..." --label in-progress --repo DimonProgrammer/Framed-
+# Закрыть по завершении:
+gh issue close <NUMBER> --repo DimonProgrammer/Framed- --comment "Готово: ..."
+# Посмотреть активные:
+gh issue list --label in-progress --repo DimonProgrammer/Framed- --state open
+```
+
+**GitHub Project board:** [DimonProgrammer/Framed- Projects](https://github.com/DimonProgrammer/Framed-/projects)
+
+---
+
 ## О проекте
 
 **FRAMED** — образовательный проект для владельцев fashion-бизнесов в России. Не онлайн-школа в инфобиз-смысле — экспертное сопровождение от действующего практика.
